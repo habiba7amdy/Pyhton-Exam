@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .quiz-type-selector {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .quiz-type-btn {
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .quiz-type-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .quiz-type-btn:not(.active) {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .quiz-type-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .quiz-content {
+            padding: 30px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            transition: width 0.3s;
+        }
+
+        .question-container {
+            margin-bottom: 30px;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .question-number {
+            font-size: 0.9em;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            color: #2d3748;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .option.correct {
+            border-color: #48bb78;
+            background: #f0fff4;
+        }
+
+        .option.incorrect {
+            border-color: #f56565;
+            background: #fff5f5;
+        }
+
+        .code-input {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            resize: vertical;
+        }
+
+        .code-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #e9ecef;
+            color: #2d3748;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-check {
+            background: #48bb78;
+            color: white;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        .feedback.correct {
+            background: #f0fff4;
+            color: #22543d;
+            border: 2px solid #48bb78;
+        }
+
+        .feedback.incorrect {
+            background: #fff5f5;
+            color: #742a2a;
+            border: 2px solid #f56565;
+        }
+
+        .results {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .results h2 {
+            font-size: 2.5em;
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+
+        .score {
+            font-size: 4em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 20px 0;
+        }
+
+        .results-details {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .result-item {
+            text-align: center;
+        }
+
+        .result-item .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .result-item .label {
+            color: #718096;
+            font-size: 1.1em;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .check-answer-btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+
+        .check-answer-btn:hover {
+            background: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .check-answer-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .hint-button {
+            display: inline-block;
+            padding: 8px 20px;
+            background: #f59e0b;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin: 15px 0;
+            transition: all 0.3s;
+        }
+
+        .hint-button:hover {
+            background: #d97706;
+            transform: translateY(-2px);
+        }
+
+        .hint-content {
+            margin: 15px 0;
+            padding: 15px;
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            border-radius: 8px;
+            color: #92400e;
+            font-weight: 500;
+        }
+
+        .hint-content strong {
+            color: #b45309;
+        }
+
+        .footer {
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            font-size: 1em;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .quiz-type-selector {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .quiz-type-btn {
+                width: 100%;
+            }
+
+            .question-text {
+                font-size: 1.1em;
+            }
+
+            .code-block {
+                font-size: 12px;
+                padding: 15px;
+                overflow-x: auto;
+            }
+
+            .code-input {
+                min-height: 150px;
+                font-size: 13px;
+            }
+
+            .buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn {
+                width: 100%;
+                margin: 5px 0;
+            }
+
+            .check-answer-btn {
+                width: 100%;
+            }
+
+            .results-details {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐍 Python Quiz Challenge</h1>
+            <p>Test your Python knowledge!</p>
+        </div>
+
+        <div class="quiz-type-selector">
+            <button class="quiz-type-btn active" onclick="selectQuizType('mcq')">Multiple Choice</button>
+            <button class="quiz-type-btn" onclick="selectQuizType('truefalse')">True/False</button>
+            <button class="quiz-type-btn" onclick="selectQuizType('fix')">Fix the Error</button>
+        </div>
+
+        <div class="quiz-content">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+
+            <div id="quizContainer"></div>
+
+            <div class="buttons">
+                <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()">Previous</button>
+                <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">Next</button>
+                <button class="btn btn-primary hidden" id="submitBtn" onclick="submitQuiz()">Submit Quiz</button>
+                <button class="btn btn-primary hidden" id="restartBtn" onclick="restartQuiz()">Restart Quiz</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        Habiba Hamdy AI Department
+    </div>
+
+    <script>
+        const mcqQuestions = [
+            {q: "What is the main advantage of Python being an interpreted language?", o: ["It is faster than compiled languages.", "It does not require compilation before execution.", "It uses less memory.", "It is statically typed."], a: 1},
+            {q: "Which of the following is NOT a Python data type?", o: ["List", "Tuple", "Array", "Dictionary"], a: 2},
+            {q: "In Python, how do you start a single-line comment?", o: ["//", "#", "/*", "&lt;!--"], a: 1},
+            {q: "Which operator is used for exponentiation in Python?", o: ["^", "**", "//", "%"], a: 1},
+            {q: "What does the input() function return?", o: ["Integer", "Float", "String", "Boolean"], a: 2},
+            {q: "What is the output of print(5 // 2)?", o: ["2.5", "2", "3", "2.0"], a: 1},
+            {q: "Which keyword is used to define a function in Python?", o: ["func", "def", "define", "function"], a: 1},
+            {q: "Which of the following is a mutable data type?", o: ["Tuple", "String", "List", "Integer"], a: 2},
+            {q: "What is the result of \"Hello\" + \"World\"?", o: ["HelloWorld", "Hello World", "Error", "Hello+World"], a: 0},
+            {q: "What does the range(5) function generate?", o: ["0, 1, 2, 3, 4", "1, 2, 3, 4, 5", "0, 1, 2, 3, 4, 5", "5, 4, 3, 2, 1"], a: 0},
+            {q: "Which statement is used to exit a loop prematurely?", o: ["stop", "exit", "break", "continue"], a: 2},
+            {q: "Which of the following is an infinite loop?", o: ["while True:", "for i in range(10):", "while i < 10:", "for i in [1,2,3]:"], a: 0},
+            {q: "What does the pass statement do?", o: ["Stops the program.", "Does nothing, used as a placeholder.", "Skips the current iteration.", "Exits the function."], a: 1},
+            {q: "How do you define a default argument in a function?", o: ["def func(a=5):", "def func(a:5):", "def func(a==5):", "def func(a:default=5):"], a: 0},
+            {q: "What is the output of print(type([]))?", o: ["&lt;class 'list'&gt;", "&lt;class 'array'&gt;", "&lt;class 'tuple'&gt;", "&lt;class 'dict'&gt;"], a: 0},
+            {q: "Which method is used to add an element to a list?", o: ["insert()", "append()", "add()", "push()"], a: 1},
+            {q: "How do you access the last element of a list my_list?", o: ["my_list[last]", "my_list[end]", "my_list[0]", "my_list[-1]"], a: 3},
+            {q: "Which data type does not allow duplicates?", o: ["List", "Tuple", "Set", "Dictionary"], a: 2},
+            {q: "What is the output of print(3 == 3.0)?", o: ["True", "False", "Error", "None"], a: 0},
+            {q: "Which operator is used for floor division?", o: ["/", "%", "**", "//"], a: 3},
+            {q: "What does eval(\"2+3\") return?", o: ["\"2+3\"", "5", "Error", "None"], a: 1},
+            {q: "Which of the following is NOT a Python keyword?", o: ["lambda", "yield", "print", "assert"], a: 2},
+            {q: "What is the result of bool(\"False\")?", o: ["True", "False", "Error", "None"], a: 0},
+            {q: "What is the output of \"abc\" * 3?", o: ["abcabcabc", "abc3", "Error", "abc abc abc"], a: 0},
+            {q: "How do you import the math module?", o: ["include math", "using math", "require math", "import math"], a: 3},
+            {q: "Which function returns the length of a list?", o: ["size()", "len()", "length()", "count()"], a: 1},
+            {q: "What is the output of print(10 > 9 and 9 < 8)?", o: ["False", "True", "Error", "None"], a: 0},
+            {q: "Which data type is immutable?", o: ["List", "Set", "Dictionary", "Tuple"], a: 3},
+            {q: "How do you create an empty dictionary?", o: ["{}", "[]", "()", "set()"], a: 0},
+            {q: "What does the continue statement do in a loop?", o: ["Exits the loop.", "Restarts the loop.", "Pauses the loop.", "Skips the current iteration."], a: 3},
+            {q: "Which of the following is a valid way to swap two variables a and b?", o: ["a = b; b = a", "a, b = b, a", "swap(a, b)", "a = b; b = temp"], a: 1},
+            {q: "What is the result of print(2 ** 3)?", o: ["6", "9", "5", "8"], a: 3},
+            {q: "Which method removes an element from a list by value?", o: ["remove()", "pop()", "delete()", "discard()"], a: 0},
+            {q: "What is the output of print(\"Hello\".upper())?", o: ["HELLO", "hello", "Hello", "Error"], a: 0},
+            {q: "Which of the following is used for string slicing?", o: ["()", "[]", "{}", "<>"], a: 1},
+            {q: "What is the result of print(\"Python\"[1:4])?", o: ["Pyt", "thon", "ytho", "yth"], a: 3},
+            {q: "Which of the following is a built-in function in Python?", o: ["printf()", "print()", "echo()", "output()"], a: 1},
+            {q: "Which of the following is a correct if-elif-else structure?", o: ["if → else → elif", "elif → if → else", "else → if → elif", "if → elif → else"], a: 3},
+            {q: "What is the output of print(not True)?", o: ["True", "False", "None", "Error"], a: 1},
+            {q: "Which data type uses key-value pairs?", o: ["List", "Tuple", "Set", "Dictionary"], a: 3},
+            {q: "What is the purpose of the global keyword?", o: ["Declare a global variable inside a function.", "Declare a local variable.", "Import a module.", "Define a constant."], a: 0},
+            {q: "Which of the following is a valid complex number in Python?", o: ["3 + 4i", "3 + 4j", "3 + 4k", "3i + 4"], a: 1},
+            {q: "What is the result of print(10 % 3)?", o: ["1", "3", "0", "10"], a: 0},
+            {q: "Which loop is used to iterate over a sequence?", o: ["while", "do-while", "repeat-until", "for"], a: 3},
+            {q: "What is printed?\ndef modify(lst):\n    lst.append(4)\nmy_list = [1, 2, 3]\nmodify(my_list)\nprint(my_list)", o: ["[1, 2, 3]", "[1, 2, 3, 4]", "[4]", "Error"], a: 1},
+            {q: "What is printed?\na = [1, 2, 3]\nb = a\nb[0] = 99\nprint(a)", o: ["[99, 2, 3]", "[1, 2, 3]", "[99, 99, 99]", "Error"], a: 0},
+            {q: "What is printed?\nx = 10\ndef func():\n    x = 5\n    print(x)\nfunc()\nprint(x)", o: ["5, 10", "10, 10", "5, 5", "Error"], a: 0},
+            {q: "What is printed?\ns = \"Python\"\nprint(s[1:4] + s[-1])", o: ["ytho", "ythn", "ython", "Pyth"], a: 1},
+            {q: "What is the result of this loop?\nfor i in range(3):\n    if i == 1:\n        continue\n    print(i, end=\" \")", o: ["0 1 2", "1 2", "0 2", "0 1"], a: 2},
+            {q: "What is printed?\ndef func(x, y, *args):\n    print(len(args))\nfunc(1, 2, 3, 4, 5)", o: ["2", "3", "5", "Error"], a: 1},
+            {q: "What is printed?\nprint(2 * 3 + 4)", o: ["10", "14", "18", "Error"], a: 0},
+            {q: "What is printed?\nx = \"Hello\"\nprint(x[0] + x[-1])", o: ["Ho", "H", "He", "lo"], a: 0},
+            {q: "What is printed?\nfor i in range(2):\n    for j in range(2):\n        print(i, j)", o: ["0 0, 1 1", "0 0, 0 1, 1 0, 1 1", "0 1, 1 0", "0 0, 0 1"], a: 1},
+            {q: "What is the output?\nx = 5\ny = 2\nprint(x // y, x % y)", o: ["2.5 1", "2 0", "2 0.5", "2 1"], a: 3},
+            {q: "What is the output?\nmy_list = [1, 2, 3, 4]\nmy_list.append([5, 6])\nprint(len(my_list))", o: ["6", "7", "5", "Error"], a: 2},
+            {q: "What does this code print?\ndef func(a, b=10):\n    return a + b\nprint(func(5))", o: ["5", "15", "Error", "10"], a: 1},
+            {q: "Which of the following is a valid Python identifier?", o: ["2variable", "_var", "for", "my-var"], a: 1},
+            {q: "What is the purpose of the else clause in a while loop?", o: ["It runs if the loop is infinite.", "It runs if the loop condition is False.", "It runs if the loop ends without a break.", "It runs before the loop starts."], a: 2},
+            {q: "Which loop is used when the number of iterations is unknown?", o: ["for loop", "while loop", "do-while loop", "nested loop"], a: 1},
+            {q: "Which function is used to convert a string to an integer in Python?", o: ["str()", "int()", "float()", "eval()"], a: 1},
+            {q: "Python is an example of which type of language?", o: ["Compiled language", "Interpreted language", "Assembly language", "Machine language"], a: 1},
+            {q: "Which of the following is NOT a valid Python identifier?", o: ["myVariable", "_privateVariable", "2celsius", "calculate_average"], a: 2},
+            {q: "What is the output of: print(type(5.0))?", o: ["&lt;class 'int'&gt;", "&lt;class 'float'&gt;", "&lt;class 'str'&gt;", "&lt;class 'double'&gt;"], a: 1},
+            {q: "What does the // operator do?", o: ["Float division", "Integer division", "Modulus", "Exponentiation"], a: 1},
+            {q: "Which of the following is a Python keyword?", o: ["variable", "function", "class", "integer"], a: 2},
+            {q: "What will be the data type of the result: 5 + 2.0?", o: ["int", "float", "str", "complex"], a: 1},
+            {q: "Which function is used to get input from the user in Python?", o: ["scanf()", "input()", "get()", "read()"], a: 1},
+            {q: "What does garbage collection do in Python?", o: ["Deletes variables", "Clears old values from memory automatically", "Removes syntax errors", "Optimizes code"], a: 1},
+            {q: "Which of the following is TRUE about Python identifiers?", o: ["They are case-insensitive", "They can start with a number", "They are case-sensitive", "They must be in uppercase"], a: 2},
+            {q: "According to programming concepts, what is a program?", o: ["A physical machine", "A sequence of instructions telling the computer what to do", "A type of hardware", "An operating system"], a: 1},
+            {q: "What does a compiler do?", o: ["Executes code line by line", "Translates high-level language to machine language", "Debugs programs", "Manages memory"], a: 1},
+            {q: "What is the output of print(5.9 + 4.2)?", o: ["10.1", "10.100000000000001", "10", "10.11"], a: 1},
+            {q: "Which function evaluates a string as Python code?", o: ["input()", "eval()", "execute()", "run()"], a: 1},
+            {q: "What is the output of swapping using x = y; y = x when x=2 and y=3?", o: ["x=3, y=2", "x=2, y=3", "x=3, y=3", "Error"], a: 2},
+            {q: "What is the correct way to swap variables in one line?", o: ["x = y = y = x", "x, y = y, x", "swap(x, y)", "x &lt;-&gt; y"], a: 1},
+            {q: "Identifiers must start with:", o: ["A letter or underscore", "Any character", "A number", "An uppercase letter"], a: 0},
+            {q: "Which data type is immutable in Python?", o: ["List", "Dictionary", "Tuple", "Set"], a: 2},
+            {q: "How do you create an empty list in Python?", o: ["list = ()", "list = []", "list = {}", "list = \"\""], a: 1},
+            {q: "What is the output of: print(\"5\" + \"7\")?", o: ["12", "57", "\"12\"", "Error"], a: 1},
+            {q: "What is the index of the last element in the list [1, 2, 3, 4, 5]?", o: ["4", "5", "-1", "Both 4 and -1"], a: 3},
+            {q: "What will int(7.9) return?", o: ["8", "7", "7.9", "Error"], a: 1},
+            {q: "Which brackets are used to create a dictionary?", o: ["[]", "()", "{}", "&lt;&gt;"], a: 2},
+            {q: "What is the output of: print(type(True))?", o: ["&lt;class 'int'&gt;", "&lt;class 'bool'&gt;", "&lt;class 'str'&gt;", "&lt;class 'boolean'&gt;"], a: 1},
+            {q: "How do you access the value associated with key 'name' in a dictionary d?", o: ["d.name", "d['name']", "d(name)", "d-&gt;name"], a: 1},
+            {q: "What is negative indexing in Python?", o: ["Invalid operation", "Counting from the right side of the sequence", "Using negative numbers as values", "Subtracting indices"], a: 1},
+            {q: "In the list [1, 2, 3, 4, 5], what is a[1:3]?", o: ["[1, 2]", "[2, 3]", "[1, 2, 3]", "[2, 3, 4]"], a: 1},
+            {q: "In the tuple t = (1, 'a', 3.14) what is the output of print(t[1:])?", o: ["(1, 'a')", "('a', 3.14)", "('a',)", "3.14"], a: 1},
+            {q: "What does negative indexing -1 refer to?", o: ["First element", "Second element", "Last element", "Invalid"], a: 2},
+            {q: "What operator gives the union of two sets?", o: ["&", "|", "-", "+"], a: 1},
+            {q: "What operator gives the intersection of two sets?", o: ["&", "|", "-", "*"], a: 0},
+            {q: "How do you access a dictionary value with key 'name'?", o: ["dict.name", "dict['name']", "dict(name)", "dict-&gt;name"], a: 1},
+            {q: "What does dict.get('key', 'default') return if key doesn't exist?", o: ["Error", "None", "'default'", "Empty string"], a: 2},
+            {q: "How do you delete a key-value pair from a dictionary?", o: ["remove()", "delete()", "del dict[key]", "dict.remove(key)"], a: 2},
+            {q: "What is the real part of complex number 3 + 4j?", o: ["4", "3", "3j", "4j"], a: 1},
+            {q: "What is int(123.45)?", o: ["124", "123", "123.45", "Error"], a: 1}
+        ];
+
+        const trueFalseQuestions = [
+            {q: "Python uses garbage collection", a: true},
+            {q: "Tuples can be modified after creation", a: false},
+            {q: "The input() function returns a string", a: true},
+            {q: "Identifiers can start with numbers", a: false},
+            {q: "x and X are the same variable in Python", a: false},
+            {q: "Sets allow duplicate values", a: false},
+            {q: "Division operator / always returns float", a: true},
+            {q: "eval() can evaluate expressions", a: true},
+            {q: "Lists are immutable", a: false},
+            {q: "Dictionary keys must be unique", a: true}
+        ];
+
+        const fixErrorQuestions = [
+            {
+                q: "Fix the swap operation:",
+                code: "a = 5\nb = 10\na = b\nb = a\nprint(a, b)",
+                answer: ["temp = a\na = b\nb = temp", "a, b = b, a"],
+                hint: "Use a temporary variable or simultaneous assignment"
+            },
+            {
+                q: "Fix the comparison error:",
+                code: "x = 10\nif x = 10:\n    print(\"x is 10\")",
+                answer: "x == 10",
+                hint: "Use == for comparison, not ="
+            },
+            {
+                q: "Fix the input comparison:",
+                code: "age = input(\"Enter age: \")\nif age >= 18:\n    print(\"Adult\")",
+                answer: "int(input",
+                hint: "Convert input to integer"
+            },
+            {
+                q: "Fix the missing colon:",
+                code: "def greet(name)\n    print(\"Hello, \" + name)\n\ngreet(\"Alice\")",
+                answer: "def greet(name):",
+                hint: "Function definitions need a colon"
+            },
+            {
+                q: "Fix the indentation:",
+                code: "x = 5\nif x > 3:\nprint(\"x is greater than 3\")",
+                answer: "    print",
+                hint: "Code inside if statement must be indented"
+            },
+            {
+                q: "Fix the variable name:",
+                code: "def calculate_area(radius):\n    area = 3.14 * radius * radius\n    print(\"Area is:\", a)\n\ncalculate_area(5)",
+                answer: "area",
+                hint: "Use the correct variable name"
+            },
+            {
+                q: "Fix the index error:",
+                code: "fruits = [\"apple\", \"banana\", \"cherry\"]\nprint(fruits[3])",
+                answer: "fruits[2]",
+                hint: "Lists are zero-indexed"
+            },
+            {
+                q: "Fix the infinite loop:",
+                code: "i = 1\nwhile i <= 5:\n    print(i)",
+                answer: "i += 1",
+                hint: "Add increment to loop variable"
+            },
+            {
+                q: "Fix the comparison operator:",
+                code: "temperature = 25\nif temperature = 25:\n    print(\"Perfect temperature!\")",
+                answer: "temperature == 25",
+                hint: "Use == for comparison, not ="
+            },
+            {
+                q: "Fix the dictionary key error:",
+                code: "student = {\"name\": \"John\", \"age\": 20}\nprint(student[\"grade\"])",
+                answer: ["student.get(\"grade\"", "\"grade\", \"Key not found\"", ".get("],
+                hint: "Use .get() method to avoid KeyError"
+            },
+            {
+                q: "Fix the division by zero error:",
+                code: "def calculate_average(numbers):\n    total = sum(numbers)\n    average = total / len(numbers)\n    return average\n\nprint(calculate_average([]))",
+                answer: ["if len(numbers) == 0", "len(numbers) == 0"],
+                hint: "Check if the list is empty before dividing"
+            },
+            {
+                q: "Fix the wrong method name:",
+                code: "text = \"Hello World\"\nprint(text.upperr())",
+                answer: "text.upper()",
+                hint: "Check the correct method name"
+            },
+            {
+                q: "Fix the string concatenation:",
+                code: "age = 25\nprint(\"I am \" + age + \" years old\")",
+                answer: ["str(age)", "age = \"25\"", "\"25\""],
+                hint: "Convert number to string for concatenation"
+            }
+        ];
+
+        let currentQuizType = 'mcq';
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let score = 0;
+        let quizSubmitted = false;
+        let questionAnswered = false;
+        let hintVisible = false;
+        let sectionScores = {
+            mcq: { score: 0, total: 0, completed: false },
+            truefalse: { score: 0, total: 0, completed: false },
+            fix: { score: 0, total: 0, completed: false }
+        };
+
+        function selectQuizType(type) {
+            currentQuizType = type;
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            score = 0;
+            quizSubmitted = false;
+            questionAnswered = false;
+            hintVisible = false;
+
+            document.querySelectorAll('.quiz-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            displayQuestion();
+        }
+
+        function displayQuestion() {
+            const questions = currentQuizType === 'mcq' ? mcqQuestions : 
+                            currentQuizType === 'truefalse' ? trueFalseQuestions : 
+                            fixErrorQuestions;
+            const question = questions[currentQuestionIndex];
+            const container = document.getElementById('quizContainer');
+            const progressBar = document.getElementById('progressBar');
+
+            progressBar.style.width = ((currentQuestionIndex + 1) / questions.length * 100) + '%';
+
+            if (currentQuizType === 'mcq') {
+                const isAnswered = questionAnswered || quizSubmitted;
+                const userAnswer = userAnswers[currentQuestionIndex];
+                
+                // Check if question contains code (has \n for newlines)
+                const hasCode = question.q.includes('\n');
+                let questionDisplay = question.q;
+                
+                if (hasCode) {
+                    // Split question into text and code parts
+                    const parts = question.q.split('\n');
+                    const textPart = parts[0];
+                    const codePart = parts.slice(1).join('\n');
+                    questionDisplay = `${textPart}<div class="code-block">${codePart}</div>`;
+                }
+                
+                container.innerHTML = `
+                    <div class="question-container">
+                        <div class="question-header">
+                            <span class="question-number">Question ${currentQuestionIndex + 1} of ${questions.length}</span>
+                        </div>
+                        <div class="question-text">${questionDisplay}</div>
+                        <div class="options" id="options">
+                            ${question.o.map((opt, i) => `
+                                <div class="option ${userAnswer === i ? 'selected' : ''} ${isAnswered ? (i === question.a ? 'correct' : userAnswer === i ? 'incorrect' : '') : ''}" 
+                                     onclick="${isAnswered ? '' : `selectOption(${i})`}">
+                                    ${String.fromCharCode(65 + i)}. ${opt}
+                                </div>
+                            `).join('')}
+                        </div>
+                        ${isAnswered && userAnswer !== undefined ? `
+                            <div class="feedback ${userAnswer === question.a ? 'correct' : 'incorrect'}">
+                                ${userAnswer === question.a ? 
+                                    '✓ Correct! Well done!' : 
+                                    `✗ Incorrect. The correct answer is: ${String.fromCharCode(65 + question.a)}. ${question.o[question.a]}`}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            } else if (currentQuizType === 'truefalse') {
+                const isAnswered = questionAnswered || quizSubmitted;
+                const userAnswer = userAnswers[currentQuestionIndex];
+                
+                container.innerHTML = `
+                    <div class="question-container">
+                        <div class="question-header">
+                            <span class="question-number">Question ${currentQuestionIndex + 1} of ${questions.length}</span>
+                        </div>
+                        <div class="question-text">${question.q}</div>
+                        <div class="options" id="options">
+                            <div class="option ${userAnswer === true ? 'selected' : ''} ${isAnswered ? (question.a === true ? 'correct' : userAnswer === true ? 'incorrect' : '') : ''}" 
+                                 onclick="${isAnswered ? '' : `selectTrueFalse(true)`}">
+                                True
+                            </div>
+                            <div class="option ${userAnswer === false ? 'selected' : ''} ${isAnswered ? (question.a === false ? 'correct' : userAnswer === false ? 'incorrect' : '') : ''}" 
+                                 onclick="${isAnswered ? '' : `selectTrueFalse(false)`}">
+                                False
+                            </div>
+                        </div>
+                        ${isAnswered && userAnswer !== undefined ? `
+                            <div class="feedback ${userAnswer === question.a ? 'correct' : 'incorrect'}">
+                                ${userAnswer === question.a ? 
+                                    '✓ Correct! Well done!' : 
+                                    `✗ Incorrect. The correct answer is: ${question.a ? 'True' : 'False'}`}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            } else {
+                const isAnswered = questionAnswered || quizSubmitted;
+                const userAnswer = userAnswers[currentQuestionIndex];
+                
+                container.innerHTML = `
+                    <div class="question-container">
+                        <div class="question-header">
+                            <span class="question-number">Question ${currentQuestionIndex + 1} of ${questions.length}</span>
+                        </div>
+                        <div class="question-text">${question.q}</div>
+                        <div class="code-block">${question.code}</div>
+                        <button class="hint-button" onclick="toggleHint()">💡 Show Hint</button>
+                        <div class="hint-content ${hintVisible ? '' : 'hidden'}" id="hintContent">
+                            <strong>Hint:</strong> ${question.hint}
+                        </div>
+                        <textarea class="code-input" id="codeInput" placeholder="Type your fix here..." ${isAnswered ? 'disabled' : ''}>${userAnswer || ''}</textarea>
+                        ${!isAnswered ? `
+                            <button class="check-answer-btn" id="checkAnswerBtn" onclick="checkFixErrorAnswer()" disabled>Check Answer</button>
+                        ` : ''}
+                        ${isAnswered && userAnswer ? `
+                            <div class="feedback ${checkFixAnswer(userAnswer, question.answer) ? 'correct' : 'incorrect'}">
+                                ${checkFixAnswer(userAnswer, question.answer) ? 
+                                    '✓ Correct! Well done!' : 
+                                    `✗ Incorrect. The key fix needed: ${Array.isArray(question.answer) ? question.answer[0] : question.answer}`}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+                
+                // Add input listener for fix error questions
+                if (!isAnswered) {
+                    const input = document.getElementById('codeInput');
+                    if (input) {
+                        input.addEventListener('input', function() {
+                            userAnswers[currentQuestionIndex] = this.value;
+                            updateButtons();
+                        });
+                    }
+                }
+            }
+
+            updateButtons();
+        }
+
+        function checkFixErrorAnswer() {
+            if (questionAnswered || quizSubmitted) return;
+            const input = document.getElementById('codeInput');
+            if (input && input.value.trim() !== '') {
+                userAnswers[currentQuestionIndex] = input.value;
+                questionAnswered = true;
+                displayQuestion();
+            }
+        }
+
+        function toggleHint() {
+            hintVisible = !hintVisible;
+            const hintContent = document.getElementById('hintContent');
+            const hintButton = document.querySelector('.hint-button');
+            
+            if (hintVisible) {
+                hintContent.classList.remove('hidden');
+                hintButton.textContent = '💡 Hide Hint';
+            } else {
+                hintContent.classList.add('hidden');
+                hintButton.textContent = '💡 Show Hint';
+            }
+        }
+
+        function selectOption(index) {
+            if (quizSubmitted || questionAnswered) return;
+            userAnswers[currentQuestionIndex] = index;
+            questionAnswered = true;
+            displayQuestion();
+        }
+
+        function selectTrueFalse(value) {
+            if (quizSubmitted || questionAnswered) return;
+            userAnswers[currentQuestionIndex] = value;
+            questionAnswered = true;
+            displayQuestion();
+        }
+
+        function checkFixAnswer(userAnswer, correctAnswer) {
+            if (!userAnswer) return false;
+            const normalized = userAnswer.toLowerCase().replace(/\s+/g, '');
+            
+            // If correctAnswer is an array, check if user answer matches any of them
+            if (Array.isArray(correctAnswer)) {
+                return correctAnswer.some(answer => {
+                    const correctNormalized = answer.toLowerCase().replace(/\s+/g, '');
+                    return normalized.includes(correctNormalized);
+                });
+            }
+            
+            // Single answer check
+            const correctNormalized = correctAnswer.toLowerCase().replace(/\s+/g, '');
+            return normalized.includes(correctNormalized);
+        }
+
+        function nextQuestion() {
+            const questions = currentQuizType === 'mcq' ? mcqQuestions : 
+                            currentQuizType === 'truefalse' ? trueFalseQuestions : 
+                            fixErrorQuestions;
+            
+            // Move to next question
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                questionAnswered = false;
+                hintVisible = false;
+                displayQuestion();
+            } else {
+                // Last question of current section - move to next section
+                if (currentQuizType === 'mcq') {
+                    // Move to True/False section
+                    calculateSectionScore();
+                    currentQuizType = 'truefalse';
+                    currentQuestionIndex = 0;
+                    userAnswers = [];
+                    questionAnswered = false;
+                    hintVisible = false;
+                    updateActiveButton();
+                    displayQuestion();
+                } else if (currentQuizType === 'truefalse') {
+                    // Move to Fix the Error section
+                    calculateSectionScore();
+                    currentQuizType = 'fix';
+                    currentQuestionIndex = 0;
+                    userAnswers = [];
+                    questionAnswered = false;
+                    hintVisible = false;
+                    updateActiveButton();
+                    displayQuestion();
+                } else {
+                    // All sections complete - show final results
+                    calculateSectionScore();
+                    showFinalResults();
+                }
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuizType === 'fix') {
+                const input = document.getElementById('codeInput');
+                if (input) {
+                    userAnswers[currentQuestionIndex] = input.value;
+                }
+            }
+
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                questionAnswered = userAnswers[currentQuestionIndex] !== undefined && (quizSubmitted || false);
+                hintVisible = false;
+                displayQuestion();
+            }
+        }
+
+        function updateButtons() {
+            const questions = currentQuizType === 'mcq' ? mcqQuestions : 
+                            currentQuizType === 'truefalse' ? trueFalseQuestions : 
+                            fixErrorQuestions;
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            const restartBtn = document.getElementById('restartBtn');
+
+            prevBtn.disabled = currentQuestionIndex === 0;
+            
+            // Enable Next/Submit only if answer has been checked (questionAnswered = true)
+            const canProceed = questionAnswered || quizSubmitted;
+            
+            // Update check answer button state if it exists
+            if (currentQuizType === 'fix') {
+                const checkBtn = document.getElementById('checkAnswerBtn');
+                if (checkBtn) {
+                    const hasText = userAnswers[currentQuestionIndex] && 
+                                   userAnswers[currentQuestionIndex].trim() !== '';
+                    checkBtn.disabled = !hasText;
+                }
+            }
+            
+            if (quizSubmitted) {
+                nextBtn.classList.remove('hidden');
+                nextBtn.disabled = false;
+                submitBtn.classList.add('hidden');
+                restartBtn.classList.remove('hidden');
+                if (currentQuestionIndex === questions.length - 1) {
+                    nextBtn.classList.add('hidden');
+                }
+            } else {
+                restartBtn.classList.add('hidden');
+                nextBtn.disabled = !canProceed;
+                nextBtn.classList.remove('hidden');
+                submitBtn.classList.add('hidden');
+                
+                // Change button text on last question
+                if (currentQuestionIndex === questions.length - 1) {
+                    if (currentQuizType === 'fix') {
+                        nextBtn.textContent = 'Finish Quiz';
+                    } else {
+                        nextBtn.textContent = 'Next Section';
+                    }
+                } else {
+                    nextBtn.textContent = 'Next';
+                }
+            }
+        }
+
+        function submitQuiz() {
+            const questions = currentQuizType === 'mcq' ? mcqQuestions : 
+                            currentQuizType === 'truefalse' ? trueFalseQuestions : 
+                            fixErrorQuestions;
+            
+            // Calculate score
+            score = 0;
+            if (currentQuizType === 'mcq') {
+                userAnswers.forEach((answer, index) => {
+                    if (answer === questions[index].a) score++;
+                });
+            } else if (currentQuizType === 'truefalse') {
+                userAnswers.forEach((answer, index) => {
+                    if (answer === questions[index].a) score++;
+                });
+            } else {
+                userAnswers.forEach((answer, index) => {
+                    if (checkFixAnswer(answer, questions[index].answer)) score++;
+                });
+            }
+
+            quizSubmitted = true;
+            showResults();
+        }
+
+        function calculateSectionScore() {
+            const questions = currentQuizType === 'mcq' ? mcqQuestions : 
+                            currentQuizType === 'truefalse' ? trueFalseQuestions : 
+                            fixErrorQuestions;
+            
+            let sectionScore = 0;
+            if (currentQuizType === 'mcq' || currentQuizType === 'truefalse') {
+                userAnswers.forEach((answer, index) => {
+                    if (answer === questions[index].a) sectionScore++;
+                });
+            } else {
+                userAnswers.forEach((answer, index) => {
+                    if (checkFixAnswer(answer, questions[index].answer)) sectionScore++;
+                });
+            }
+            
+            sectionScores[currentQuizType] = {
+                score: sectionScore,
+                total: questions.length,
+                completed: true
+            };
+        }
+
+        function updateActiveButton() {
+            document.querySelectorAll('.quiz-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            const buttons = document.querySelectorAll('.quiz-type-btn');
+            if (currentQuizType === 'mcq') buttons[0].classList.add('active');
+            else if (currentQuizType === 'truefalse') buttons[1].classList.add('active');
+            else if (currentQuizType === 'fix') buttons[2].classList.add('active');
+        }
+
+        function showFinalResults() {
+            const totalScore = sectionScores.mcq.score + sectionScores.truefalse.score + sectionScores.fix.score;
+            const totalQuestions = sectionScores.mcq.total + sectionScores.truefalse.total + sectionScores.fix.total;
+            const percentage = Math.round((totalScore / totalQuestions) * 100);
+            const container = document.getElementById('quizContainer');
+
+            container.innerHTML = `
+                <div class="results">
+                    <h2>🎉 Quiz Complete! 🎉</h2>
+                    <div class="score">${percentage}%</div>
+                    <p style="font-size: 1.3em; color: #667eea; font-weight: 600; margin: 20px 0;">
+                        Overall Score: ${totalScore} / ${totalQuestions}
+                    </p>
+                    
+                    <div style="text-align: left; max-width: 500px; margin: 30px auto; background: #f8f9fa; padding: 25px; border-radius: 15px;">
+                        <h3 style="color: #2d3748; margin-bottom: 20px; text-align: center;">Section Breakdown</h3>
+                        
+                        <div style="margin-bottom: 15px; padding: 15px; background: white; border-radius: 10px; border-left: 4px solid #667eea;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: 600; color: #2d3748;">Multiple Choice</span>
+                                <span style="font-size: 1.2em; color: #667eea; font-weight: bold;">
+                                    ${sectionScores.mcq.score} / ${sectionScores.mcq.total}
+                                </span>
+                            </div>
+                            <div style="margin-top: 8px; color: #718096;">
+                                ${Math.round((sectionScores.mcq.score / sectionScores.mcq.total) * 100)}% correct
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px; padding: 15px; background: white; border-radius: 10px; border-left: 4px solid #10b981;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: 600; color: #2d3748;">True/False</span>
+                                <span style="font-size: 1.2em; color: #10b981; font-weight: bold;">
+                                    ${sectionScores.truefalse.score} / ${sectionScores.truefalse.total}
+                                </span>
+                            </div>
+                            <div style="margin-top: 8px; color: #718096;">
+                                ${Math.round((sectionScores.truefalse.score / sectionScores.truefalse.total) * 100)}% correct
+                            </div>
+                        </div>
+                        
+                        <div style="padding: 15px; background: white; border-radius: 10px; border-left: 4px solid #f59e0b;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: 600; color: #2d3748;">Fix the Error</span>
+                                <span style="font-size: 1.2em; color: #f59e0b; font-weight: bold;">
+                                    ${sectionScores.fix.score} / ${sectionScores.fix.total}
+                                </span>
+                            </div>
+                            <div style="margin-top: 8px; color: #718096;">
+                                ${Math.round((sectionScores.fix.score / sectionScores.fix.total) * 100)}% correct
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="results-details">
+                        <div class="result-item">
+                            <div class="number">${totalScore}</div>
+                            <div class="label">Correct</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="number">${totalQuestions - totalScore}</div>
+                            <div class="label">Incorrect</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="number">${totalQuestions}</div>
+                            <div class="label">Total</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Update buttons
+            document.getElementById('prevBtn').classList.add('hidden');
+            document.getElementById('nextBtn').classList.add('hidden');
+            document.getElementById('submitBtn').classList.add('hidden');
+            document.getElementById('restartBtn').classList.remove('hidden');
+            document.getElementById('restartBtn').textContent = 'Start Over';
+        }
+
+        function showResults() {
+            const questions = currentQuizType === 'mcq' ? mcqQuestions : 
+                            currentQuizType === 'truefalse' ? trueFalseQuestions : 
+                            fixErrorQuestions;
+            const percentage = Math.round((score / questions.length) * 100);
+            const container = document.getElementById('quizContainer');
+
+            container.innerHTML = `
+                <div class="results">
+                    <h2>Quiz Complete! 🎉</h2>
+                    <div class="score">${percentage}%</div>
+                    <div class="results-details">
+                        <div class="result-item">
+                            <div class="number">${score}</div>
+                            <div class="label">Correct</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="number">${questions.length - score}</div>
+                            <div class="label">Incorrect</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="number">${questions.length}</div>
+                            <div class="label">Total</div>
+                        </div>
+                    </div>
+                    <p style="font-size: 1.2em; color: #718096; margin-top: 20px;">
+                        Click "Previous" to review your answers or "Restart Quiz" to try again!
+                    </p>
+                </div>
+            `;
+
+            currentQuestionIndex = 0;
+            updateButtons();
+        }
+
+        function restartQuiz() {
+            currentQuizType = 'mcq';
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            score = 0;
+            quizSubmitted = false;
+            questionAnswered = false;
+            hintVisible = false;
+            sectionScores = {
+                mcq: { score: 0, total: 0, completed: false },
+                truefalse: { score: 0, total: 0, completed: false },
+                fix: { score: 0, total: 0, completed: false }
+            };
+            
+            // Reset button visibility
+            document.getElementById('prevBtn').classList.remove('hidden');
+            document.getElementById('nextBtn').classList.remove('hidden');
+            
+            updateActiveButton();
+            displayQuestion();
+        }
+
+        // Initialize
+        displayQuestion();
+    </script>
+</body>
+</html>
